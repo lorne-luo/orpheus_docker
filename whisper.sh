@@ -6,7 +6,15 @@ LANG="${3:-Chinese}"
 echo "Whisper ${1} with ${MODEL} model"
 START=$SECONDS
 
-whisper $1 --model $MODEL --language $LANG
+init=""
+if [[ $LANG == "Chinese" || $var == "zh" ]]; then
+    init="这是一首简体中文普通话的歌"
+fi
+if [[ $LANG == "English" || $var == "en" ]]; then
+    init="This is a english song."
+fi
+
+whisper $1 --model $MODEL --language $LANG --initial_prompt "${init}。"
 opencc -c t2s -i vocals.srt -o vocals.srt
 opencc -c t2s -i vocals.json -o vocals.json
 opencc -c t2s -i vocals.tsv -o vocals.tsv
