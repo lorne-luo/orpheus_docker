@@ -37,6 +37,22 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          # this might remove tools that are actually needed,
+          # if set to "true" but frees about 6 GB
+          tool-cache: false
+
+          # all of these default to true, but feel free to set to
+          # "false" if necessary for your workflow
+          android: false
+          dotnet: false
+          haskell: false
+          large-packages: false
+          docker-images: true
+          swap-storage: false
+
       - name: Build spleeter branch Docker image
         uses: docker/build-push-action@v4
         if: ${{ env.BRANCH_NAME == 'spleeter' }}
