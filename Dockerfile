@@ -82,15 +82,8 @@ RUN chmod +x /whisper.sh
 ENTRYPOINT ["/y2ok.sh"]
 
 
+
 FROM taoluo/orpheus:spleeter-whisper-medium as allinone
-# add large model
-ADD https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt /root/.cache/whisper/large-v2.pt
-ADD whisper.sh /whisper.sh
-RUN chmod +x /whisper.sh
-ENTRYPOINT ["/y2ok.sh"]
-
-
-FROM taoluo/orpheus:all as whisper
 # add large model
 ADD https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt /root/.cache/whisper/large-v2.pt
 ADD whisper.sh /whisper.sh
@@ -113,3 +106,12 @@ ADD y2ok.sh /y2ok.sh
 RUN chmod +x /y2ok.sh
 ENTRYPOINT ["/y2ok.sh"]
 
+
+FROM taoluo/orpheus:allinone as whisper
+ADD v2ok.sh /v2ok.sh
+RUN chmod +x /v2ok.sh
+ADD y2ok.sh /y2ok.sh
+RUN chmod +x /y2ok.sh
+ADD whisper.sh /whisper.sh
+RUN chmod +x /whisper.sh
+ENTRYPOINT ["/y2ok.sh"]

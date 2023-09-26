@@ -3,8 +3,13 @@ name: Docker Image CI
 on:
   push:
     branches:
-      - spleeter*
-      - whisper*
+      - spleeter
+      - whisper-base
+      - whisper-medium
+      - whisper-large
+      - whisper-all
+      - spleeter-whisper-medium
+      - spleeter-whisper-large
       - allinone
       - master
 
@@ -54,110 +59,19 @@ jobs:
           docker-images: false
           swap-storage: true
 
-      - name: Build spleeter branch Docker image
+      - name: Build ${{ env.BRANCH_NAME }} tag of Docker image
+        # build docker image tag with branch name
         uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'spleeter' }}
+        if: ${{ env.BRANCH_NAME != 'master' }}
         with:
           context: .
           file: Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64,linux/arm64
-          target: spleeter
+          target: ${{ env.BRANCH_NAME }}
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:spleeter
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:spleeter
-
-      - name: Build whisper-base branch Docker image
-        uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'whisper-base' }}
-        with:
-          context: .
-          file: Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64,linux/arm64
-          target: whisper-base
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:whisper-base
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:whisper-base
-
-      - name: Build whisper-medium branch Docker image
-        uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'whisper-medium' }}
-        with:
-          context: .
-          file: Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64,linux/arm64
-          target: whisper-medium
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:whisper-medium
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:whisper-medium
-
-      - name: Build whisper-large branch Docker image
-        uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'whisper-large' }}
-        with:
-          context: .
-          file: Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64,linux/arm64
-          target: whisper-large
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:whisper-large
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:whisper-large
-
-      - name: Build whisper-all branch Docker image
-        # whisper include both medium and large models
-        uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'whisper-all' }}
-        with:
-          context: .
-          file: Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64,linux/arm64
-          target: whisper-all
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:whisper-all
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:whisper-all
-
-      - name: Build spleeter-whisper-medium branch Docker image
-        uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'spleeter-whisper-medium' }}
-        with:
-          context: .
-          file: Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64,linux/arm64
-          target: spleeter-whisper-medium
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:spleeter-whisper-medium
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:spleeter-whisper-medium
-
-      - name: Build spleeter-whisper-large branch Docker image
-        uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'spleeter-whisper-large' }}
-        with:
-          context: .
-          file: Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64,linux/arm64
-          target: spleeter-whisper-large
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:spleeter-whisper-large
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:spleeter-whisper-large
-
-      - name: Build allinone branch Docker image
-        uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'allinone' }}
-        with:
-          context: .
-          file: Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64,linux/arm64
-          target: allinone
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:allinone
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:allinone
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.BRANCH_NAME }}
+            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ env.BRANCH_NAME }}
 
       - name: Build ${{ env.IMAGE_NAME }}:v2ok branch Docker image
         uses: docker/build-push-action@v4
@@ -184,3 +98,16 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:y2ok
             ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:y2ok
+
+      - name: Build ${{ env.IMAGE_NAME }}:whisper branch Docker image
+        uses: docker/build-push-action@v4
+        if: ${{ env.BRANCH_NAME == 'master' }}
+        with:
+          context: .
+          file: Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          platforms: linux/amd64,linux/arm64
+          target: whisper
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:whisper
+            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:whisper
