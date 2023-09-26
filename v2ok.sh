@@ -51,6 +51,6 @@ mv /data/audio.wav /data/audio
 
 if [ -f "/whisper.sh" ]; then
   MODEL="${3:-medium}"
-  ./whisper.sh /data/audio/audio.wav $MODEL
+  /whisper.sh /data/audio/audio.wav $MODEL
 fi
 
