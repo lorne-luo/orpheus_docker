@@ -6,6 +6,7 @@ on:
       - spleeter*
       - whisper*
       - all
+      - master
 
 env:
   IMAGE_NAME: orpheus
@@ -46,12 +47,12 @@ jobs:
 
           # all of these default to true, but feel free to set to
           # "false" if necessary for your workflow
-          android: false
-          dotnet: false
-          haskell: false
-          large-packages: false
-          docker-images: true
-          swap-storage: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: false
+          swap-storage: true
 
       - name: Build spleeter branch Docker image
         uses: docker/build-push-action@v4
@@ -156,3 +157,29 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:all
             ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:all
+
+      - name: Build ${{ env.IMAGE_NAME }}:v2ok branch Docker image
+        uses: docker/build-push-action@v4
+        if: ${{ env.BRANCH_NAME == 'master' }}
+        with:
+          context: .
+          file: Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          platforms: linux/amd64,linux/arm64
+          target: v2ok
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:v2ok
+            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:v2ok
+
+      - name: Build ${{ env.IMAGE_NAME }}:y2ok branch Docker image
+        uses: docker/build-push-action@v4
+        if: ${{ env.BRANCH_NAME == 'master' }}
+        with:
+          context: .
+          file: Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          platforms: linux/amd64,linux/arm64
+          target: y2ok
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:y2ok
+            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:y2ok

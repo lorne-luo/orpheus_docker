@@ -38,7 +38,7 @@ if [ ! -e "$(pwd)/pretrained_models/2stems" ]; then
 fi
 
 echo "Start spleeter."
-spleeter separate -p spleeter:2stems -o /data /data/audio.wav
+spleeter separate -p spleeter:2stems -o . /data/audio.wav
 
 rm -rf $OUTPUT
 echo "Merge video and audio, ${OUTPUT}"
