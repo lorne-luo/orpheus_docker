@@ -34,7 +34,7 @@ fi
 #  fi
 #fi
 
-mkdir "/data/${ID}"
+mkdir -p "/data/${ID}"
 OUTPUT="/data/${ID}/${ID}_ok.mp4"
 DOWNLOAD="/data/${ID}/${ID}.mp4"
 

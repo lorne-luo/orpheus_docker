@@ -18,10 +18,16 @@ fi
 
 FOLDER=$(dirname "$OUTPUT")
 AUDIO="$FOLDER/audio.wav"
+VOCALS="$FOLDER/audio/vocals.wav"
+SUBTITLE="$FOLDER/audio/vocals.srt"
+SUBTITLE_VIDEO="$FOLDER/subtitle.mp4"
 echo "INPUT=$INPUT"
 echo "OUTPUT=$OUTPUT"
 echo "FOLDER=$FOLDER"
 echo "AUDIO=$AUDIO"
+echo "VOCALS=$VOCALS"
+echo "SUBTITLE=$SUBTITLE"
+echo "SUBTITLE_VIDEO=$SUBTITLE_VIDEO"
 
 if [ -f "$INPUT" ]; then
   echo "$INPUT exists."
@@ -41,12 +47,16 @@ if [ ! -e "$(pwd)/pretrained_models/2stems" ]; then
   tar -zxf  /tmp/2stems.tar.gz -C ./pretrained_models/2stems
 fi
 
-echo "Start spleeter."
-spleeter separate -p spleeter:2stems -o . $AUDIO
+if [ -f "$FOLDER/audio/vocals.wav" ]; then
+  echo "Vocal exists, skip split ${AUDIO}"
+else
+  echo "Start spleeter."
+  spleeter separate -p spleeter:2stems -o . $AUDIO
+fi
 
 rm -rf $OUTPUT
-echo "Merge video and audio, ${OUTPUT}"
-ffmpeg -v quiet -y -i $INPUT -itsoffset 0.5 -i "$FOLDER/audio/accompaniment.wav" -c:v copy -map 0:v:0 -map 1:a:0 -c:a aac $OUTPUT
+echo "Merging video+audio, ${OUTPUT}"
+ffmpeg -v quiet -y -i $INPUT -itsoffset 0.3 -i "$FOLDER/audio/accompaniment.wav" -c:v copy -map 0:v:0 -map 1:a:0 -c:a aac $OUTPUT
 
 DURATION=$(($SECONDS - $START))
 echo "Export to ${OUTPUT}."
@@ -56,6 +66,10 @@ rm -rf ./pretrained_models
 if [ -f "/whisper.sh" ]; then
   MODEL="${3:-medium}"
   LANG="${4:-Chinese}"
-  /whisper.sh $AUDIO $MODEL $LANG
+  /whisper.sh $VOCALS $MODEL $LANG
+  if [ -f "${SUBTITLE}" ]; then
+    echo "Merging video/audio/subtitle, ${OUTPUT}"
+    ffmpeg -v quiet -y -i $INPUT -itsoffset 0.3 -i "$FOLDER/audio/accompaniment.wav" -vf "subtitles='${SUBTITLE}'" -c:v copy -map 0:v:0 -map 1:a:0 -c:a aac $SUBTITLE_VIDEO
+  fi
 fi
 
