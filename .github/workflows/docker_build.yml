@@ -5,7 +5,7 @@ on:
     branches:
       - spleeter*
       - whisper*
-      - all
+      - allinone
       - master
 
 env:
@@ -146,18 +146,18 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:spleeter-whisper-large
             ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:spleeter-whisper-large
 
-      - name: Build spleeter-whisper-all branch Docker image
+      - name: Build allinone branch Docker image
         uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'all' }}
+        if: ${{ env.BRANCH_NAME == 'allinone' }}
         with:
           context: .
           file: Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64,linux/arm64
-          target: all
+          target: allinone
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:all
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:all
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:allinone
+            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:allinone
 
       - name: Build ${{ env.IMAGE_NAME }}:v2ok branch Docker image
         uses: docker/build-push-action@v4
