@@ -24,17 +24,19 @@ else
   ID=$(yt-dlp --print filename -o "%(id)s" ${1})
 fi
 
-if [ -z "${2:-}" ]; then
-  OUTPUT="/data/${ID}_ok.mp4"
-else
-  if [[ "$2" != *.* ]]; then
-    OUTPUT="/data/${2}.mp4"
-  else
-    OUTPUT="/data/${2}"
-  fi
-fi
+#if [ -z "${2:-}" ]; then
+#  OUTPUT="/data/${ID}/${ID}_ok.mp4"
+#else
+#  if [[ "$2" != *.* ]]; then
+#    OUTPUT="/data/${ID}/${2}.mp4"
+#  else
+#    OUTPUT="/data/${ID}/${2}"
+#  fi
+#fi
 
-DOWNLOAD="/data/${ID}.mp4"
+mkdir "/data/${ID}"
+OUTPUT="/data/${ID}/${ID}_ok.mp4"
+DOWNLOAD="/data/${ID}/${ID}.mp4"
 
 if [ -f "$DOWNLOAD" ]; then
   echo "$DOWNLOAD exists."
@@ -43,13 +45,14 @@ else
   #echo "ID=$ID"
   echo "DOWNLOAD=$DOWNLOAD"
   echo "OUTPUT=$OUTPUT"
-  yt-dlp -N 1 --no-playlist -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best" -o "/data/%(id)s.mp4" $URL
+  yt-dlp -N 1 --no-playlist -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best" -o "/data/%(id)s/%(id)s.mp4" $URL
 
   DURATION=$(($SECONDS - $START))
   echo "Download from Youtube in ${DURATION} seconds."
 fi
 
-
-/v2ok.sh $DOWNLOAD $OUTPUT
+MODEL="${2:-medium}"
+LANG="${3:-Chinese}"
+/v2ok.sh $DOWNLOAD $OUTPUT $MODEL $LANG
 DURATION=$(($SECONDS - $START))
 echo "Finished in ${DURATION} seconds."
