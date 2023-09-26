@@ -66,6 +66,7 @@ rm -rf ./pretrained_models
 if [ -f "/whisper.sh" ]; then
   MODEL="${3:-medium}"
   LANG="${4:-Chinese}"
+  cd "$FOLDER/audio"
   /whisper.sh $VOCALS $MODEL $LANG
   if [ -f "${SUBTITLE}" ]; then
     echo "Merging video/audio/subtitle, ${OUTPUT}"

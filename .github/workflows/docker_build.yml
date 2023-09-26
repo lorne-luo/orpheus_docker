@@ -11,6 +11,8 @@ on:
       - spleeter-whisper-medium
       - spleeter-whisper-large
       - allinone
+      - v2ok
+      - y2ok
       - master
 
 env:
@@ -75,7 +77,7 @@ jobs:
 
       - name: Build ${{ env.IMAGE_NAME }}:v2ok branch Docker image
         uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'master' }}
+        if: ${{ env.BRANCH_NAME == 'v2ok' }}
         with:
           context: .
           file: Dockerfile
@@ -88,7 +90,7 @@ jobs:
 
       - name: Build ${{ env.IMAGE_NAME }}:y2ok branch Docker image
         uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'master' }}
+        if: ${{ env.BRANCH_NAME == 'y2ok' }}
         with:
           context: .
           file: Dockerfile
@@ -101,13 +103,15 @@ jobs:
 
       - name: Build ${{ env.IMAGE_NAME }}:whisper branch Docker image
         uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'master' }}
+        if: ${{ env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'main' }}
         with:
           context: .
           file: Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64,linux/arm64
-          target: whisper
+          target: main
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:whisper
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:whisper
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:main
+            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:main
