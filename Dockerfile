@@ -107,7 +107,7 @@ RUN chmod +x /y2ok.sh
 ENTRYPOINT ["/y2ok.sh"]
 
 
-FROM taoluo/orpheus:allinone as main
+FROM taoluo/orpheus:allinone as youtube
 RUN echo 'alias ll="ls -lah"' >> /root/.bashrc
 ADD v2ok.sh /v2ok.sh
 RUN chmod +x /v2ok.sh

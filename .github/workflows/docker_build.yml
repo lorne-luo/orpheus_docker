@@ -13,7 +13,7 @@ on:
       - allinone
       - v2ok
       - y2ok
-      - master
+      - youtube
 
 env:
   IMAGE_NAME: orpheus
@@ -64,7 +64,7 @@ jobs:
       - name: Build ${{ env.BRANCH_NAME }} tag of Docker image
         # build docker image tag with branch name
         uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME != 'master' }}
+        if: ${{ env.BRANCH_NAME != 'main' }}
         with:
           context: .
           file: Dockerfile
@@ -74,44 +74,3 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.BRANCH_NAME }}
             ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ env.BRANCH_NAME }}
-
-      - name: Build ${{ env.IMAGE_NAME }}:v2ok branch Docker image
-        uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'v2ok' }}
-        with:
-          context: .
-          file: Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64,linux/arm64
-          target: v2ok
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:v2ok
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:v2ok
-
-      - name: Build ${{ env.IMAGE_NAME }}:y2ok branch Docker image
-        uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'y2ok' }}
-        with:
-          context: .
-          file: Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64,linux/arm64
-          target: y2ok
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:y2ok
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:y2ok
-
-      - name: Build ${{ env.IMAGE_NAME }}:whisper branch Docker image
-        uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'main' }}
-        with:
-          context: .
-          file: Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64,linux/arm64
-          target: main
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:main
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:main
