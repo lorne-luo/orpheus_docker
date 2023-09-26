@@ -69,8 +69,8 @@ if [ -f "/whisper.sh" ]; then
   cd "$FOLDER/audio"
   /whisper.sh $VOCALS $MODEL $LANG
   if [ -f "${SUBTITLE}" ]; then
-    echo "Merging video/audio/subtitle, ${OUTPUT}"
-    ffmpeg -v quiet -y -i $INPUT -itsoffset 0.3 -i "$FOLDER/audio/accompaniment.wav" -vf "subtitles='${SUBTITLE}'" -c:v copy -map 0:v:0 -map 1:a:0 -c:a aac $SUBTITLE_VIDEO
+    echo "Merging video/audio/subtitle, ${SUBTITLE_VIDEO}"
+    ffmpeg -y -i $INPUT -itsoffset 0.3 -i "$FOLDER/audio/accompaniment.wav" -vf "subtitles='${SUBTITLE}'" -c:v copy -map 0:v:0 -map 1:a:0 -c:a aac $SUBTITLE_VIDEO
   fi
 fi
 
