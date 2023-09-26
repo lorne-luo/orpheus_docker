@@ -106,18 +106,19 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:whisper-large
             ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:whisper-large
 
-      - name: Build whisper branch Docker image
+      - name: Build whisper-all branch Docker image
+        # whisper include both medium and large models
         uses: docker/build-push-action@v4
-        if: ${{ env.BRANCH_NAME == 'whisper' }}
+        if: ${{ env.BRANCH_NAME == 'whisper-all' }}
         with:
           context: .
           file: Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64,linux/arm64
-          target: whisper
+          target: whisper-all
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:whisper
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:whisper
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:whisper-all
+            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:whisper-all
 
       - name: Build spleeter-whisper-medium branch Docker image
         uses: docker/build-push-action@v4
