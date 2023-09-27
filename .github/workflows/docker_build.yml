@@ -14,6 +14,8 @@ on:
       - v2ok
       - y2ok
       - youtube
+      - whisper-jax
+      - faster-whisper
 
 env:
   IMAGE_NAME: orpheus
@@ -58,9 +60,9 @@ jobs:
           android: true
           dotnet: true
           haskell: true
-          large-packages: true
+          large-packages: false
           docker-images: false
-          swap-storage: true
+          swap-storage: false
 
       - name: Build ${{ env.BRANCH_NAME }} tag of Docker image
         # build docker image tag with branch name

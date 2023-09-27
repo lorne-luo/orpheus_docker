@@ -134,9 +134,15 @@ RUN pip3 install --no-cache-dir --upgrade pip
 RUN pip3 install jaxlib
 
 
-FROM jax as whisper-jax
+FROM taoluo/orpheus:jax as whisper-jax
 # install Whisper JAX
 RUN pip install --upgrade --no-deps --force-reinstall git+https://github.com/sanchit-gandhi/whisper-jax.git
+
+# add medium model
+ADD https://openaipublic.azureedge.net/main/whisper/models/345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1/medium.pt /root/.cache/whisper/medium.pt
+
+# add large model
+ADD https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt /root/.cache/whisper/large-v2.pt
 
 ADD audio_example.mp3 /tmp
 ADD whisper_jax.py /whisper_jax.py
@@ -147,17 +153,16 @@ ENTRYPOINT ["python3", "/whisper_jax.py"]
 FROM python:3.9.18-slim-bullseye as faster-whisper
 RUN echo 'alias ll="ls -lah"' >> /root/.bashrc
 RUN apt-get update
-RUN apt install -y ffmpeg opencc vim libcairo2 libcairo2-dev pkg-config python3-dev
+RUN apt install -y ffmpeg opencc gcc vim libcairo2 libcairo2-dev pkg-config python3-dev libgirepository1.0-dev
 
 RUN pip3 install --no-cache-dir --upgrade pip
-RUN pip3 install soundfile librosa srt yt-dlp
-RUN pip install faster-whisper pyonfx
+RUN pip3 install soundfile librosa srt yt-dlp pyonfx click
+RUN pip3 install faster-whisper
+
 ADD audio_example.mp3 /tmp
+ADD whisper_faster.py /whisper_faster.py
 
-ADD https://huggingface.co/guillaumekln/faster-whisper-medium/resolve/main/model.bin /root/.cache/huggingface-hub/faster-whisper-medium
-ADD https://huggingface.co/guillaumekln/faster-whisper-large-v2/resolve/main/model.bin /root/.cache/huggingface-hub/faster-whisper-large-v2
-ADD faster-whisper.py /faster-whisper.py
-
-RUN python /whisper_jax.py
-ENTRYPOINT ["python3", "/faster-whisper.py"]
+RUN python /whisper_faster.py /tmp/audio_example.mp3 -m large
+RUN python /whisper_faster.py /tmp/audio_example.mp3 -m medium
+ENTRYPOINT ["python3", "/whisper_faster.py"]
 
