@@ -4,8 +4,8 @@ from faster_whisper import WhisperModel
 
 @click.command()
 @click.argument('input', type=click.Path(exists=True))
-@click.option('--language', '-l', default='zh', required=True, help='Language')
-@click.option('--model', '-m', default='large-v2', required=True, help='Model file or data')
+@click.option('--language', '-l', default='zh', required=False, help='Language')
+@click.option('--model', '-m', default='large-v2', required=False, help='Model file or data')
 def main(input, language, model):
     if model == 'large':
         model = 'large-v2'
@@ -16,7 +16,6 @@ def main(input, language, model):
     # model = WhisperModel(model, device="cuda", compute_type="int8_float16")
     # or run on CPU with INT8
     model = WhisperModel(model, device="cpu", compute_type="int8")
-
     segments, info = model.transcribe(input, language=language, beam_size=5)
 
     print("Detected language '%s' with probability %f" % (info.language, info.language_probability))

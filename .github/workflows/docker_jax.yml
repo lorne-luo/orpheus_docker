@@ -3,7 +3,7 @@ name: Docker Image CI
 on:
   push:
     branches:
-      - jax
+      - jax-base-amd64
 
 env:
   IMAGE_NAME: orpheus
