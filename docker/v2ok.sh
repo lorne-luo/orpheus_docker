@@ -44,7 +44,7 @@ ffmpeg -v quiet -y -vn -acodec pcm_s16le -ar 44100 -ac 2 $AUDIO -i $INPUT
 # extract 2stems model
 if [ ! -e "$(pwd)/pretrained_models/2stems" ]; then
   mkdir -p ./pretrained_models/2stems
-  tar -zxf  /tmp/2stems.tar.gz -C ./pretrained_models/2stems
+  tar -zxf  /root/2stems.tar.gz -C ./pretrained_models/2stems
 fi
 
 if [ -f "$FOLDER/audio/vocals.wav" ]; then

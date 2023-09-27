@@ -6,9 +6,9 @@ RUN pip3 install --no-cache-dir --upgrade pip
 RUN pip3 install spleeter
 RUN pip3 install yt-dlp pyonfx
 
-ADD https://github.com/deezer/spleeter/releases/download/v1.4.0/2stems.tar.gz /tmp
+ADD https://github.com/deezer/spleeter/releases/download/v1.4.0/2stems.tar.gz /root
 # RUN tar -zxf  /data/pretrained_models/2stems.tar.gz -C /data/pretrained_models/2stems
-ADD audio_example.mp3 /tmp
+ADD audio_example.mp3 /root
 
 ADD v2ok.sh /v2ok.sh
 RUN chmod +x /v2ok.sh
@@ -24,7 +24,7 @@ RUN apt install -y ffmpeg opencc gcc vim libcairo2 libcairo2-dev pkg-config pyth
 RUN pip3 install --no-cache-dir --upgrade pip
 RUN pip3 install openai-whisper torch==1.10.1
 RUN pip3 install soundfile librosa srt yt-dlp pyonfx
-ADD audio_example.mp3 /tmp
+ADD audio_example.mp3 /root
 
 ADD v2ok.sh /v2ok.sh
 RUN chmod +x /v2ok.sh
@@ -161,9 +161,9 @@ RUN pip install --upgrade --no-deps --force-reinstall git+https://github.com/san
 ## add large model
 #ADD https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt /root/.cache/whisper/large-v2.pt
 
-ADD audio_example.mp3 /tmp
+ADD audio_example.mp3 /root
 ADD whisper-jax.py /whisper-jax.py
-RUN python /whisper-jax.py /tmp/audio_example.mp3
+RUN python /whisper-jax.py /root/audio_example.mp3
 ENTRYPOINT ["python3", "/whisper-jax.py"]
 
 
@@ -176,9 +176,24 @@ RUN pip3 install --no-cache-dir --upgrade pip
 RUN pip3 install soundfile librosa srt yt-dlp pyonfx click
 RUN pip3 install faster-whisper
 
-ADD audio_example.mp3 /tmp
+ADD audio_example.mp3 /root/
 ADD whisper_faster.py /whisper_faster.py
 
-RUN python /whisper_faster.py /tmp/audio_example.mp3 -m large
+RUN python /whisper_faster.py /root/audio_example.mp3 -m large
 ENTRYPOINT ["python3", "/whisper_faster.py"]
 
+FROM taoluo/orpheus:whisper-jax as spleeter-whisper-jax
+RUN apt-get update
+RUN apt install -y ffmpeg opencc gcc vim libcairo2 libcairo2-dev pkg-config python3-dev libgirepository1.0-dev
+RUN pip3 install spleeter
+RUN pip3 install soundfile librosa srt yt-dlp pyonfx
+
+ADD audio_example.mp3 /root
+ADD https://github.com/deezer/spleeter/releases/download/v1.4.0/2stems.tar.gz /root
+
+ADD v2ok.sh /v2ok.sh
+RUN chmod +x /v2ok.sh
+ADD y2ok.sh /y2ok.sh
+RUN chmod +x /y2ok.sh
+ADD whisper-jax.py /whisper-jax.py
+ENTRYPOINT ["python3", "/whisper-jax.py"]
