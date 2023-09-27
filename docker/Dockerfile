@@ -131,8 +131,8 @@ RUN apt-get update
 RUN apt install -y ffmpeg opencc vim
 
 RUN pip3 install --no-cache-dir --upgrade pip
-RUN pip3 install jaxlib
-RUN pip3 install jax
+RUN pip3 install jaxlib==0.4.6 jax==0.4.6
+RUN pip3 install click cached-property
 
 FROM python:3.9.18-slim-bullseye as jax-base-arm64
 RUN echo 'alias ll="ls -lah"' >> /root/.bashrc
@@ -148,6 +148,8 @@ RUN git checkout jax-v0.4.5
 
 RUN python build/build.py
 RUN pip install dist/*.whl
+# installs jax
+RUN pip install -e .
 
 
 
@@ -195,5 +197,18 @@ ADD v2ok.sh /v2ok.sh
 RUN chmod +x /v2ok.sh
 ADD y2ok.sh /y2ok.sh
 RUN chmod +x /y2ok.sh
+ADD whisper-jax.py /whisper-jax.py
+ENTRYPOINT ["python3", "/whisper-jax.py"]
+
+FROM python:3.9.18-slim-bullseye as jax-base-arm64
+RUN echo 'alias ll="ls -lah"' >> /root/.bashrc
+ADD audio_example.mp3 /root
+RUN apt-get update
+RUN apt install -y ffmpeg opencc vim git g++ python python3-dev libcairo2 libcairo2-dev pkg-config libgirepository1.0-dev
+
+RUN pip install --upgrade pip click
+RUN pip install --upgrade "jax[cpu]" torch click
+RUN pip install git+https://github.com/sanchit-gandhi/whisper-jax.git
+
 ADD whisper-jax.py /whisper-jax.py
 ENTRYPOINT ["python3", "/whisper-jax.py"]
