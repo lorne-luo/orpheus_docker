@@ -3,7 +3,7 @@ name: Docker Image CI
 on:
   push:
     branches:
-      - jax
+      - jax-base
 
 env:
   IMAGE_NAME: orpheus
@@ -60,7 +60,7 @@ jobs:
           file: ./docker/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64
-          target: ${{ env.BRANCH_NAME }}
+          target: jax-base-amd64
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.BRANCH_NAME }}
             ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ env.BRANCH_NAME }}

@@ -125,29 +125,46 @@ ADD whisper.sh /whisper.sh
 RUN chmod +x /whisper.sh
 ENTRYPOINT ["/y2ok.sh"]
 
-FROM python:3.9.18-slim-bullseye as jax
+FROM python:3.9.18-slim-bullseye as jax-base-amd64
 RUN echo 'alias ll="ls -lah"' >> /root/.bashrc
 RUN apt-get update
 RUN apt install -y ffmpeg opencc vim
 
 RUN pip3 install --no-cache-dir --upgrade pip
 RUN pip3 install jaxlib
+RUN pip3 install jax
+
+FROM python:3.9.18-slim-bullseye as jax-base-arm64
+RUN echo 'alias ll="ls -lah"' >> /root/.bashrc
+RUN apt-get update
+RUN apt install -y ffmpeg opencc vim git g++ python python3-dev libcairo2 libcairo2-dev pkg-config libgirepository1.0-dev
+
+RUN pip3 install --no-cache-dir --upgrade pip
+RUN pip install numpy wheel build soundfile librosa srt yt-dlp pyonfx click cached-property
+
+RUN git clone https://github.com/google/jax
+RUN cd jax
+RUN git checkout jax-v0.4.5
+
+RUN python build/build.py
+RUN pip install dist/*.whl
+
 
 
 FROM taoluo/orpheus:jax as whisper-jax
 # install Whisper JAX
 RUN pip install --upgrade --no-deps --force-reinstall git+https://github.com/sanchit-gandhi/whisper-jax.git
 
-# add medium model
-ADD https://openaipublic.azureedge.net/main/whisper/models/345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1/medium.pt /root/.cache/whisper/medium.pt
-
-# add large model
-ADD https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt /root/.cache/whisper/large-v2.pt
+## add medium model
+#ADD https://openaipublic.azureedge.net/main/whisper/models/345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1/medium.pt /root/.cache/whisper/medium.pt
+#
+## add large model
+#ADD https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt /root/.cache/whisper/large-v2.pt
 
 ADD audio_example.mp3 /tmp
-ADD whisper_jax.py /whisper_jax.py
-RUN python /whisper_jax.py
-ENTRYPOINT ["python3", "/whisper_jax.py"]
+ADD whisper-jax.py /whisper-jax.py
+RUN python /whisper-jax.py /tmp/audio_example.mp3
+ENTRYPOINT ["python3", "/whisper-jax.py"]
 
 
 FROM python:3.9.18-slim-bullseye as faster-whisper
@@ -163,6 +180,5 @@ ADD audio_example.mp3 /tmp
 ADD whisper_faster.py /whisper_faster.py
 
 RUN python /whisper_faster.py /tmp/audio_example.mp3 -m large
-RUN python /whisper_faster.py /tmp/audio_example.mp3 -m medium
 ENTRYPOINT ["python3", "/whisper_faster.py"]
 
