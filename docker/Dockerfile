@@ -19,7 +19,7 @@ ENTRYPOINT ["/y2ok.sh"]
 
 FROM python:3.9.18-slim-bullseye as whisper-base
 RUN apt-get update
-RUN apt install -y ffmpeg opencc gcc vim libcairo2 libcairo2-dev pkg-config python3-dev
+RUN apt install -y ffmpeg opencc gcc vim libcairo2 libcairo2-dev pkg-config python3-dev libgirepository1.0-dev
 
 RUN pip3 install --no-cache-dir --upgrade pip
 RUN pip3 install openai-whisper torch==1.10.1
@@ -128,22 +128,10 @@ ENTRYPOINT ["/y2ok.sh"]
 FROM python:3.9.18-slim-bullseye as jax
 RUN echo 'alias ll="ls -lah"' >> /root/.bashrc
 RUN apt-get update
-RUN apt install -y ffmpeg opencc vim g++ gcc python python3-dev git
+RUN apt install -y ffmpeg opencc vim
 
 RUN pip3 install --no-cache-dir --upgrade pip
-RUN pip install -U jax[cpu] numpy wheel build
-
-#obtain the JAX source code
-RUN cd /tmp
-RUN git clone https://github.com/google/jax
-RUN cd jax
-
-# build jaxlib CPU only
-RUN python build/build.py
-RUN pip install dist/*.whl
-
-# installs jax
-RUN pip install -e .
+RUN pip3 install jaxlib
 
 
 FROM jax as whisper-jax

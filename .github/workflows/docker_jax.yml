@@ -3,17 +3,7 @@ name: Docker Image CI
 on:
   push:
     branches:
-      - spleeter
-      - whisper-base
-      - whisper-medium
-      - whisper-large
-      - whisper-all
-      - spleeter-whisper-medium
-      - spleeter-whisper-large
-      - allinone
-      - v2ok
-      - y2ok
-      - youtube
+      - jax
 
 env:
   IMAGE_NAME: orpheus
@@ -69,7 +59,7 @@ jobs:
           context: ./docker
           file: ./docker/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           target: ${{ env.BRANCH_NAME }}
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.BRANCH_NAME }}
