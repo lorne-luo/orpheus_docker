@@ -21,5 +21,8 @@ opencc -c t2s -i vocals.tsv -o vocals.tsv
 opencc -c t2s -i vocals.txt -o vocals.txt
 opencc -c t2s -i vocals.vtt -o vocals.vtt
 
+python3 /srt2ass.py $(pwd)/vocals.srt $(pwd)/vocals.ass
+python3 /subtitle_effects.py $(pwd)/vocals.ass $(pwd)/vocals_fx.ass
+
 DURATION=$(($SECONDS - $START))
 echo "Whisper in ${DURATION} seconds."

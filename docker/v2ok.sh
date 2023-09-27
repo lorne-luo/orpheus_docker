@@ -19,7 +19,7 @@ fi
 FOLDER=$(dirname "$OUTPUT")
 AUDIO="$FOLDER/audio.wav"
 VOCALS="$FOLDER/audio/vocals.wav"
-SUBTITLE="$FOLDER/audio/vocals.srt"
+SUBTITLE="$FOLDER/audio/vocals_fx.ass"
 SUBTITLE_VIDEO="$FOLDER/subtitle.mp4"
 echo "INPUT=$INPUT"
 echo "OUTPUT=$OUTPUT"
@@ -66,11 +66,12 @@ rm -rf ./pretrained_models
 if [ -f "/whisper.sh" ]; then
   MODEL="${3:-medium}"
   LANG="${4:-Chinese}"
-  cd "$FOLDER/audio"
-  /whisper.sh $VOCALS $MODEL $LANG
-  if [ -f "${SUBTITLE}" ]; then
-    echo "Merging video/audio/subtitle, ${SUBTITLE_VIDEO}"
-    ffmpeg -y -i $INPUT -itsoffset 0.3 -i "$FOLDER/audio/accompaniment.wav" -vf "subtitles='${SUBTITLE}'" -c:v copy -map 0:v:0 -map 1:a:0 -c:a aac $SUBTITLE_VIDEO
+
+  if [ ! -f "${SUBTITLE}" ]; then
+    cd "$FOLDER/audio"
+    /whisper.sh $VOCALS $MODEL $LANG
   fi
+  echo "Merging video/audio/subtitle, ${SUBTITLE_VIDEO}"
+  ffmpeg -y -i $OUTPUT -vf "subtitles=${SUBTITLE}" -c:a copy $SUBTITLE_VIDEO
 fi
 
