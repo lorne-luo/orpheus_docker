@@ -1,4 +1,6 @@
-import click as click
+from datetime import datetime
+
+import click
 from faster_whisper import WhisperModel
 
 
@@ -20,8 +22,11 @@ def main(input, language, model):
 
     print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
 
+    start = datetime.now()
     for segment in segments:
         print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
+
+    print(datetime.now() - start)
 
 
 if __name__ == '__main__':
