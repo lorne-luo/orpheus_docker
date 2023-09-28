@@ -166,6 +166,13 @@ ADD whisper_faster.py /whisper_faster.py
 ENTRYPOINT ["python3", "/whisper_faster.py"]
 
 
+FROM taoluo/orpheus:faster-whisper-base as faster-whisper-medium
+
+ADD whisper_faster.py /whisper_faster.py
+RUN python /whisper_faster.py /root/audio_example.mp3 -l en -m medium
+ENTRYPOINT ["python3", "/whisper_faster.py"]
+
+
 FROM taoluo/orpheus:faster-whisper-base as faster-whisper-large
 
 ADD whisper_faster.py /whisper_faster.py

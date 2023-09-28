@@ -16,6 +16,7 @@ on:
       - youtube
       - whisper-jax
       - faster-whisper-base
+      - faster-whisper-medium
       - faster-whisper
       - spleeter-whisper-jax
 
