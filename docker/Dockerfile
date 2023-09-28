@@ -152,8 +152,9 @@ RUN pip install dist/*.whl
 RUN pip install -e .
 
 
-FROM python:3.9.18-slim-bullseye as faster-whisper
+FROM python:3.9.18-slim-bullseye as faster-whisper-base
 RUN echo 'alias ll="ls -lah"' >> /root/.bashrc
+ADD audio_example.mp3 /root
 RUN apt-get update
 RUN apt install -y ffmpeg opencc gcc vim libcairo2 libcairo2-dev pkg-config python3-dev libgirepository1.0-dev
 
@@ -161,11 +162,16 @@ RUN pip3 install --no-cache-dir --upgrade pip
 RUN pip3 install soundfile librosa srt yt-dlp pyonfx click
 RUN pip3 install faster-whisper
 
-ADD audio_example.mp3 /root/
 ADD whisper_faster.py /whisper_faster.py
-
-RUN python /whisper_faster.py /root/audio_example.mp3 -m large
 ENTRYPOINT ["python3", "/whisper_faster.py"]
+
+
+FROM taoluo/orpheus:faster-whisper-base as faster-whisper-large
+
+ADD whisper_faster.py /whisper_faster.py
+RUN python /whisper_faster.py /root/audio_example.mp3 -l en -m large
+ENTRYPOINT ["python3", "/whisper_faster.py"]
+
 
 FROM taoluo/orpheus:whisper-jax as spleeter-whisper-jax
 RUN apt-get update

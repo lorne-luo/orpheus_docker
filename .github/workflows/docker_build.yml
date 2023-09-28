@@ -15,6 +15,7 @@ on:
       - y2ok
       - youtube
       - whisper-jax
+      - faster-whisper-base
       - faster-whisper
       - spleeter-whisper-jax
 

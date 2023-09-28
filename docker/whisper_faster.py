@@ -11,6 +11,7 @@ from faster_whisper import WhisperModel
 def main(input, language, model):
     if model == 'large':
         model = 'large-v2'
+    start = datetime.now()
     # Run on GPU with FP16
     # model = WhisperModel(model, device="cuda", compute_type="float16")
 
@@ -22,7 +23,6 @@ def main(input, language, model):
 
     print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
 
-    start = datetime.now()
     for segment in segments:
         print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
 
