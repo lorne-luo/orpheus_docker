@@ -1,14 +1,15 @@
 FROM python:3.9.18-slim-bullseye as spleeter
 RUN apt-get update
-RUN apt install -y ffmpeg opencc gcc vim libcairo2 libcairo2-dev pkg-config python3-dev
+RUN apt install -y ffmpeg opencc gcc vim libcairo2 libcairo2-dev pkg-config python3-dev libgirepository1.0-dev
 
-RUN pip3 install --no-cache-dir --upgrade pip
-RUN pip3 install spleeter
-RUN pip3 install yt-dlp pyonfx
+RUN pip3 install --no-cache-dir --upgrade pip yt-dlp pyonfx
+RUN pip3 install spleeter numba==0.55.2 numpy==1.22.4
 
 ADD https://github.com/deezer/spleeter/releases/download/v1.4.0/2stems.tar.gz /root
-# RUN tar -zxf  /data/pretrained_models/2stems.tar.gz -C /data/pretrained_models/2stems
+RUN mkdir -p /root/2stems/
+RUN tar vxf /root/2stems.tar.gz -C /root/2stems
 ADD audio_example.mp3 /root
+ENV MODEL_PATH=/root
 
 ADD v2ok.sh /v2ok.sh
 RUN chmod +x /v2ok.sh
