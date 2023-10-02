@@ -8,8 +8,8 @@ RUN pip3 install spleeter numba==0.55.2 numpy==1.22.4
 ADD https://github.com/deezer/spleeter/releases/download/v1.4.0/2stems.tar.gz /root
 RUN mkdir -p /root/2stems/
 RUN tar vxf /root/2stems.tar.gz -C /root/2stems
-ADD audio_example.mp3 /root
 ENV MODEL_PATH=/root
+ADD audio_example.mp3 /root
 
 ADD v2ok.sh /v2ok.sh
 RUN chmod +x /v2ok.sh
@@ -184,11 +184,14 @@ ENTRYPOINT ["python3", "/whisper_faster.py"]
 FROM taoluo/orpheus:whisper-jax as spleeter-whisper-jax
 RUN apt-get update
 RUN apt install -y ffmpeg opencc gcc vim libcairo2 libcairo2-dev pkg-config python3-dev libgirepository1.0-dev
-RUN pip3 install spleeter
+RUN pip3 install spleeter numba==0.55.2 numpy==1.22.4
 RUN pip3 install soundfile librosa srt yt-dlp pyonfx
 
-ADD audio_example.mp3 /root
 ADD https://github.com/deezer/spleeter/releases/download/v1.4.0/2stems.tar.gz /root
+RUN mkdir -p /root/2stems/
+RUN tar vxf /root/2stems.tar.gz -C /root/2stems
+ENV MODEL_PATH=/root
+ADD audio_example.mp3 /root
 
 ADD v2ok.sh /v2ok.sh
 RUN chmod +x /v2ok.sh
