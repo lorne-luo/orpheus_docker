@@ -20,6 +20,8 @@ on:
       - faster-whisper
       - spleeter-whisper-jax
       - spleeter-faster-whisper-base
+      - spleeter-faster-whisper-large-v2
+      - spleeter-faster-whisper-medium
 
 env:
   IMAGE_NAME: orpheus
