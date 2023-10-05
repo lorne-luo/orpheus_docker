@@ -224,3 +224,16 @@ RUN pip install git+https://github.com/sanchit-gandhi/whisper-jax.git
 
 ADD whisper-jax.py /whisper-jax.py
 ENTRYPOINT ["python3", "/whisper-jax.py"]
+
+FROM taoluo/orpheus:spleeter as spleeter-faster-whisper-base
+RUN echo 'alias ll="ls -lah"' >> /root/.bashrc
+ADD audio_example.mp3 /root
+RUN apt-get update
+RUN apt install -y ffmpeg opencc gcc vim libcairo2 libcairo2-dev pkg-config python3-dev libgirepository1.0-dev
+
+RUN pip3 install --no-cache-dir --upgrade pip
+RUN pip3 install soundfile librosa srt yt-dlp pyonfx click
+RUN pip3 install faster-whisper
+
+ADD whisper_faster.py /whisper_faster.py
+ENTRYPOINT ["python3", "/whisper_faster.py"]

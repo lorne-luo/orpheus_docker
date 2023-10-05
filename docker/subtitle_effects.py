@@ -342,9 +342,10 @@ class SubtitleFX:
         """"""
         for line in self.lines:
             # Generating lines
-            if line.styleref.name == 'Romaji':
+            print(line.styleref)
+            if line.style == 'Romaji':
                 self.romaji(line, line.copy())
-            elif line.styleref.name == 'Kanji':
+            elif line.style == 'Kanji':
                 self.kanji(line, line.copy())
             else:
                 self.sub(line, line.copy())

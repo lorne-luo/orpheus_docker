@@ -19,6 +19,7 @@ on:
       - faster-whisper-medium
       - faster-whisper
       - spleeter-whisper-jax
+      - spleeter-faster-whisper-base
 
 env:
   IMAGE_NAME: orpheus
